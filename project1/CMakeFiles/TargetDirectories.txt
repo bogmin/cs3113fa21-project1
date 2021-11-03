@@ -1,0 +1,3 @@
+C:/Users/Andrew/Desktop/cs3113/proj1/proj1v2/cmake-build-debug/CMakeFiles/proj1v2.dir
+C:/Users/Andrew/Desktop/cs3113/proj1/proj1v2/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Andrew/Desktop/cs3113/proj1/proj1v2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
