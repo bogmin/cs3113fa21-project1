@@ -127,7 +127,7 @@ int main() {
     scanf("%d",&num_threads);
     scanf("%d",&num_instructions);
     
-    assert(num_processors==1);
+    
 
     thread_t threads[num_threads]; //create an array of threads that will store the results of each thread's execution
     memset(threads, 0, sizeof(thread_t)*num_threads);
@@ -160,7 +160,7 @@ int main() {
     //}
     
     //input_queue is filled now
-    
+
     //simulation starts here
 
     uint32_t simulation_counter=0; //keep track of the number of time units the simulation has ran
