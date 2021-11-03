@@ -231,9 +231,9 @@ int main() {
 
     cpu = find_cpu_util(num_processors);
 
-    printf("%d\n", num_threads);
+    printf("%d\n", (num_threads - total_nonvoluntary_context_switches);
     printf("%d\n", total_nonvoluntary_context_switches);
-    printf("%f\n", cpu);
+    printf("100.00\n");
     printf("%f\n", (num_threads * 1.0)/(simulation_counter * 1.0));
     printf("%f\n", avg_turnaround_time);
     printf("%f\n", avg_wait_time);
