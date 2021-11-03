@@ -1,0 +1,19 @@
+# cs3113fa21-project1
+Andrew McGuffin
+Program is run by reading inputs in through stdin. 
+Throughput function seems a little finicky and needs improvement.
+
+Assumptions:
+-number of processes is just 1
+-number of threads is under 32
+
+Program has several unused modules in anticipation for upcoming projects, notably execution_element_t.
+
+Functions include linked list creation functions and functions for finding the various project requirements. Comments in the code describe their states and operations at various points.
+
+Library statements: #include <stdio.h>
+#include <string.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#include<stdint.h>
+#include <assert.h>
