@@ -20,12 +20,12 @@ typedef struct data_t {
     int pid; //the process id for this instruction
     int burst; //the number of time units this instruction needs to run
     int priority; //the priority of this instruction (0 has highest priority)
-    
-    //bool started; //true if this instruction 
-  //  double turnaround_time; 
- //   double wait_time; //number of time units this instruction spends waiting on the ready queue
- //   double response_time; //number of time units from when this instruction was queued until it started
-  //  bool last; //true if this instruction_t is the last with this pid in the simulation, false otherwise
+
+    //bool started; //true if this instruction
+    //  double turnaround_time;
+    //   double wait_time; //number of time units this instruction spends waiting on the ready queue
+    //   double response_time; //number of time units from when this instruction was queued until it started
+    //  bool last; //true if this instruction_t is the last with this pid in the simulation, false otherwise
 } data_t;
 
 typedef struct execution_element_t {
@@ -116,24 +116,28 @@ double find_cpu_util(int num_processors){
 //}
 
 
-int main() {
-    
-    //scan in the first two lines of the input file
+int main(int argc, char **argv) {
+
+    FILE *fp = argc > 1 ? fopen (argv[1], "r") : stdin; //read in file given as argv[1] or read stdin
+    if (!fp){
+        fprintf(stderr, "file open failed '%s'\n",argv[1]);
+    }
     int i;
     int num_processors;
     int num_threads;
     int num_instructions;
-    scanf("%d",&num_processors);
-    scanf("%d",&num_threads);
-    scanf("%d",&num_instructions);
-    
-    
+    //read in first two lines
+    fscanf(fp,"%d",&num_processors);
+    fscanf(fp,"%d",&num_threads);
+    fscanf(fp,"%d",&num_instructions);
+
+
 
     thread_t threads[num_threads]; //create an array of threads that will store the results of each thread's execution
     memset(threads, 0, sizeof(thread_t)*num_threads);
-    
+
     linked_list_t * input_queue = ll_create(); //store instructions as they are read from stdin
-    
+
 
     //int array[N];
     int pid;
@@ -141,24 +145,24 @@ int main() {
     int priority;
     double cpu;
     //float totalBurst;
-    
+
     //read in the inputs
-    
+
     data_t data;
     memset(&data, 0, sizeof(data_t));
-    
+
     //while (!feof(stdin)){
     for (i=0; i<num_instructions; i++){
-        scanf("%d",&pid);
-        scanf("%d",&burst);
-        scanf("%d",&priority);
+        fscanf(fp,"%d",&pid);
+        fscanf(fp,"%d",&burst);
+        fscanf(fp,"%d",&priority);
         data.pid = pid;
         data.burst = burst;
         data.priority = priority;
         ll_append(input_queue,&data);
     }
     //}
-    
+
     //input_queue is filled now
 
     //simulation starts here
@@ -167,20 +171,20 @@ int main() {
     data_t * current_instruction;
     data_t * prev_instruction = NULL;
     thread_t * t; //the current thread in simulation
-    
+
     //iterate over the instructions
     current_instruction = ll_first(input_queue);
     while (current_instruction != NULL){
         //printf("pid %d burst %d\n",current_instruction->pid, current_instruction->burst );
         pid = current_instruction->pid;
-        
+
         assert(pid>0);
         assert(pid <= num_threads); //check for an error condition caused by malformed inputs
-        
+
         t = &threads[pid-1];
-        
+
         //the simulation_counter equals the moment this new instruction began running
-        
+
         if (t->started == false){ //if this is the first instruction for the thread
             t->started = true;
             t->response_time = simulation_counter;
@@ -188,22 +192,22 @@ int main() {
         }
         else if (t->time_last_running > 0) { //this is not the first instruction in this thread to run
             t->wait_time += (simulation_counter - t->time_last_running); //wait time accrued for this thread while it wasn't running
-            
+
             if (prev_instruction != NULL) {
                 if (prev_instruction->pid != current_instruction->pid) {
                     t->nonvoluntary_context_switches++; //this thread has a non-voluntary context switch imposed on it
                 }
             }
-            
+
         }
-        
+
         simulation_counter += current_instruction->burst;
         //the simulation_counter equals the moment this new instruction finished
-        
+
         t->time_last_running = simulation_counter; //this will mark the time at which this thread was last being executed
-        
+
         t->turnaround_time = simulation_counter; //if this is the last instruction for the thread, then this is its turnaround time
-        
+
         prev_instruction = current_instruction;
         current_instruction = ll_next(input_queue);
         if (current_instruction == NULL){break;}
@@ -215,31 +219,33 @@ int main() {
     double avg_wait_time;
     double avg_response_time;
     double avg_throughput;
-    
+
     //for(i=0; i<num_threads; i++){printf("%d %d %d\n", threads[i].turnaround_time, threads[i].wait_time, threads[i].response_time);}
-    
+
     for(i=0; i<num_threads; i++){
         total_nonvoluntary_context_switches += threads[i].nonvoluntary_context_switches;
         avg_turnaround_time += threads[i].turnaround_time;
         avg_wait_time += threads[i].wait_time;
         avg_response_time += threads[i].response_time;
     }
-    
+
     avg_turnaround_time = avg_turnaround_time / num_threads;
     avg_wait_time       = avg_wait_time / num_threads;
     avg_response_time   = avg_response_time / num_threads;
 
     cpu = find_cpu_util(num_processors);
 
-    printf("%d\n", num_threads);
+    printf("%d\n", num_threads - total_nonvoluntary_context_switches);
     printf("%d\n", total_nonvoluntary_context_switches);
-    printf("%f\n", cpu);
-    printf("%f\n", (num_threads * 1.0)/(simulation_counter * 1.0));
-    printf("%f\n", avg_turnaround_time);
-    printf("%f\n", avg_wait_time);
-    printf("%f\n", avg_response_time);
-    
+    printf("%.2f\n", cpu);
+    printf("%.2f\n", (num_threads * 1.0)/(simulation_counter * 1.0));
+    printf("%.2f\n", avg_turnaround_time);
+    printf("%.2f\n", avg_wait_time);
+    printf("%.2f\n", avg_response_time);
 
+    if (fp != stdin){
+        fclose(fp);
+    }
     //pidArray(list, array);
     //totalBurst = find_total_burst(list);
     //find_wait(totalBurst);
