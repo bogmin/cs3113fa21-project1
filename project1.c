@@ -235,7 +235,7 @@ int main(int argc, char **argv) {
 
     cpu = find_cpu_util(num_processors);
 
-    printf("%d\n", num_threads - total_nonvoluntary_context_switches);
+    printf("%d\n", num_threads);
     printf("%d\n", total_nonvoluntary_context_switches);
     printf("%.2f\n", cpu);
     printf("%.2f\n", (num_threads * 1.0)/(simulation_counter * 1.0));
